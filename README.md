@@ -1,3 +1,15 @@
+<p align="center">
+  <img src="assets/logo/zerorpc-logo.png" alt="ZeroRPC Logo" width="300"/>
+</p>
+
+<h1 align="center">ZeroRPC 🚀</h1>
+<p align="center">
+  Ultra-Lightweight Shared Memory RPC with Futex Synchronization and GUI Benchmarking
+</p>
+
+---
+
+
 # NanoRPC 🚀
 Ultra-Lightweight Shared Memory RPC with Futex Synchronization and GUI Benchmarking
 
