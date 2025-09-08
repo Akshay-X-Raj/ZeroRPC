@@ -9,19 +9,15 @@
 
 ---
 
-
-# ZeroRPC 🚀
-Ultra-Lightweight Shared Memory RPC with Futex Synchronization and GUI Benchmarking
-
 ## Overview
-NanoRPC is a high-performance **inter-process communication (IPC) system** built for Linux.  
+ZerooRPC is a high-performance **inter-process communication (IPC) system** built for Linux.  
 It uses:
 - **POSIX shared memory** for true zero-copy data transfer  
 - **Linux futexes** for ultra-fast synchronization  
 
 This design enables **microsecond-level latency**, significantly outperforming traditional IPC mechanisms like Unix domain sockets.  
 
-A **Python GUI dashboard** (PyQt + Matplotlib) is included to visualize benchmark results and compare NanoRPC with Unix domain sockets.
+A **Python GUI dashboard** (PyQt + Matplotlib) is included to visualize benchmark results and compare ZeroRPC with Unix domain sockets.
 
 ---
 
