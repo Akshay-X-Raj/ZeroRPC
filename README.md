@@ -1,108 +1,17 @@
-<p align="center">
-  <img src="assets/logo/zerorpc-logo.png" alt="ZeroRPC Logo" width="300"/>
-</p>
-
-<h1 align="center">ZeroRPC 🚀</h1>
-<p align="center">
-  Ultra-Lightweight Shared Memory RPC with Futex Synchronization and GUI Benchmarking
-</p>
-
----
-
-## Overview
-ZerooRPC is a high-performance **inter-process communication (IPC) system** built for Linux.  
-It uses:
-- **POSIX shared memory** for true zero-copy data transfer  
-- **Linux futexes** for ultra-fast synchronization  
-
-This design enables **microsecond-level latency**, significantly outperforming traditional IPC mechanisms like Unix domain sockets.  
-
-A **Python GUI dashboard** (PyQt + Matplotlib) is included to visualize benchmark results and compare ZeroRPC with Unix domain sockets.
-
----
+# ZeroRPC  
+Ultra-lightweight Shared Memory RPC with Futex Synchronization + GUI Benchmarking
 
 ## Features
-- 🚀 Ultra-low latency request/response communication  
-- ⚡ Zero-copy IPC using shared memory  
-- 🔒 Futex-based synchronization (minimal kernel transitions)  
-- 📊 Benchmarking tool to measure RTT and throughput  
-- 🎨 Python GUI for real-time visualization of IPC performance  
+- Zero-copy IPC using POSIX shared memory
+- Futex synchronization for low-latency signaling
+- Client/Server RPC request-response cycle
+- GUI Dashboard (Dear ImGui + SDL2 + OpenGL)  
+  - Send custom RPC messages  
+  - Plot request latency (µs) with auto-scaling  
+  - Logs panel  
+  - Clear Logs button  
+  - Save Logs to CSV  
 
----
-
-## Getting Started
-
-### Prerequisites
-- Linux (Kernel 5.x+, tested on Arch Linux)  
-- g++ (C++17 or later)  
-- Python 3.9+ with `PyQt5` and `matplotlib`  
-
-Install Python dependencies:
+## Dependencies (Arch Linux)
 ```bash
-pip install pyqt5 matplotlib
-
-Build
-
-Compile the server, client, and benchmark tools:
-'''bash
-make
-
-Run
-
-Start the server:
-'''bash
-./server
-
-Run the client:
-'''bash
-./client
-
-Benchmark (Shared Memory vs. Unix Domain Sockets):
-
-'''bash
-./benchmark
-
-Launch the GUI dashboard:
-
-'''bash
-python3 gui/main.py
-
-
-##Project Structure
-
-.
-├── src/
-│   ├── server.cpp
-│   ├── client.cpp
-│   ├── benchmark.cpp
-│   ├── utils.cpp
-│   └── ultra_rpc.hpp
-├── gui/
-│   └── main.py
-├── Makefile
-├── README.md
-├── .gitignore
-└── LICENSE
-
-
-##Roadmap
-- Multi-client support
-- Asynchronous RPC handling
-- Shared memory pool for larger payloads
-- Python bindings for direct use in applications
-
-
-###License
-
-This project is licensed under the MIT License – see the LICENSE
-
-###Author
-
--Akshay Raj @Akshay-X-Raj
-
-
-###Acknowledgments
-
--Linux man pages: futex(2),shm_open(3)
--Ulrich Drepper – “Futexes Are Tricky”
--PyQt and Matplotlib documentation
+sudo pacman -S cmake gcc sdl2 glew mesa
