@@ -1,0 +1,5 @@
+/home/arch/zerorpc/build/CMakeFiles/zerorpc_server.dir
+/home/arch/zerorpc/build/CMakeFiles/zerorpc_client.dir
+/home/arch/zerorpc/build/CMakeFiles/zerorpc_gui.dir
+/home/arch/zerorpc/build/CMakeFiles/edit_cache.dir
+/home/arch/zerorpc/build/CMakeFiles/rebuild_cache.dir

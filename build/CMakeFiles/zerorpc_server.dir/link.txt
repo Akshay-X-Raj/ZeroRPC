@@ -1,0 +1,1 @@
+/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/zerorpc_server.dir/link.d CMakeFiles/zerorpc_server.dir/src/main_server.cpp.o CMakeFiles/zerorpc_server.dir/src/Server.cpp.o CMakeFiles/zerorpc_server.dir/src/SharedMemory.cpp.o CMakeFiles/zerorpc_server.dir/src/Futex.cpp.o -o zerorpc_server  /usr/lib/libSDL2-2.0.so.0.3200.56

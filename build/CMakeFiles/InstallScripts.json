@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/arch/zerorpc/build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
