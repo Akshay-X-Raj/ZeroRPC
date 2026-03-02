@@ -1,9 +1,0 @@
-Request,Response,Latency(us),Timestamp(ms)
-Hi Buddy how are you.,Hi Buddy how are you.,119.541,5916144
-Test 1,Test 1,137.446,5934032
-Test 2,Test 2,93.541,5939568
-Test 3,Test 3,96.226,5942445
-Test 4,Test 4,992.065,5945488
-Test 5,Test 5,126.855,5949395
-Test 6,Test 6,78.972,5959718
-Test 7,Test 7,129.55,5968386
