@@ -1,38 +1,26 @@
 #include "Client.h"
+#include "SharedMemory.h"
 #include "Futex.h"
-#include <iostream>
 #include <cstring>
+#include <atomic>
 
-Client::Client(const std::string& shmName)
-    : shm(shmName, sizeof(RpcSharedData), /*create*/false)
-{
-    data = reinterpret_cast<RpcSharedData*>(shm.get());
+struct RpcBuffer {
+    std::atomic<int> flag;
+    char message[256];
+};
+
+Client::Client(const std::string& shm_name) {
+    SharedMemory shm(shm_name, sizeof(RpcBuffer), false);
+    shm_ptr = shm.data();
 }
 
 std::string Client::call(const std::string& msg) {
-    // Write request
-    std::strncpy(data->buffer, msg.c_str(), BUFFER_SIZE - 1);
-    data->buffer[BUFFER_SIZE - 1] = '\0';
-
-    data->state.store(1, std::memory_order_release);
-    Futex::wake(&data->state);
-
-    // Wait for response
-    while (data->state.load(std::memory_order_acquire) != 2) {
-        // Sleep only if state matches 1
-        Futex::wait(&data->state, 1);
-    }
-
-    std::string response(data->buffer);
-
-    // Reset to idle
-    data->state.store(0, std::memory_order_release);
-    Futex::wake(&data->state);
-
-    return response;
-}
-
-void Client::demo_send(const std::string& msg) {
-    std::string resp = call(msg);
-    std::cout << "[Client] Response: " << resp << std::endl;
+    RpcBuffer* buf = (RpcBuffer*)shm_ptr;
+    std::strncpy(buf->message, msg.c_str(), sizeof(buf->message));
+    buf->flag.store(1);
+    futex_wake(&buf->flag, 1);
+    while (buf->flag.load() != 2)
+        futex_wait(&buf->flag, 1);
+    buf->flag.store(0);
+    return std::string(buf->message);
 }

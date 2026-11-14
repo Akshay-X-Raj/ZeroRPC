@@ -1,0 +1,7 @@
+#include <iostream>
+
+int main() {
+    std::cout << "Starting ZeroRPC GUI Benchmark..." << std::endl;
+    extern int main_gui_entry(); // defined in BenchmarkGUI.cpp
+    return main_gui_entry();
+}

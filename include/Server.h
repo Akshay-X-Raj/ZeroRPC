@@ -1,14 +1,10 @@
 #pragma once
 #include <string>
-#include "SharedMemory.h"
-#include "ZeroRPC.h"
 
 class Server {
 public:
-    explicit Server(const std::string& shmName = "/zerorpc_shm");
-    void run(); // infinite loop
-
+    Server(const std::string& shm_name);
+    void run();
 private:
-    SharedMemory shm;
-    RpcSharedData* data{nullptr};
+    void* shm_ptr;
 };

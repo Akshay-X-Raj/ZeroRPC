@@ -1,36 +1,32 @@
 #include "Server.h"
+#include "SharedMemory.h"
 #include "Futex.h"
 #include <iostream>
-#include <string>
+#include <atomic>
 #include <cstring>
 
-Server::Server(const std::string& shmName)
-    : shm(shmName, sizeof(RpcSharedData), /*create*/true)
-{
-    data = reinterpret_cast<RpcSharedData*>(shm.get());
-    data->state.store(0, std::memory_order_relaxed);
-    std::memset(data->buffer, 0, BUFFER_SIZE);
-    std::cout << "[Server] Ready. Shared memory: " << shmName << std::endl;
+struct RpcBuffer {
+    std::atomic<int> flag;
+    char message[256];
+};
+
+Server::Server(const std::string& shm_name) {
+    SharedMemory shm(shm_name, sizeof(RpcBuffer), true);
+    shm_ptr = shm.data();
+    RpcBuffer* buf = (RpcBuffer*)shm_ptr;
+    buf->flag.store(0);
 }
 
 void Server::run() {
+    RpcBuffer* buf = (RpcBuffer*)shm_ptr;
     while (true) {
-        // Wait for client request
-        while (data->state.load(std::memory_order_acquire) != 1) {
-            // Sleep only if state matches 0
-            Futex::wait(&data->state, 0);
+        if (buf->flag.load() == 1) {
+            std::cout << "[Server] Received: " << buf->message << std::endl;
+            strcat(buf->message, " [ack]");
+            buf->flag.store(2);
+            futex_wake(&buf->flag, 1);
+        } else {
+            futex_wait(&buf->flag, 0);
         }
-
-        // Read request
-        std::string request(data->buffer);
-        std::cout << "[Server] Received: " << request << std::endl;
-
-        // Echo back exactly what was sent
-        std::strncpy(data->buffer, request.c_str(), BUFFER_SIZE - 1);
-        data->buffer[BUFFER_SIZE - 1] = '\0';
-
-        // Publish response
-        data->state.store(2, std::memory_order_release);
-        Futex::wake(&data->state);
     }
 }

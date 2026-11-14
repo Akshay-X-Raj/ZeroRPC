@@ -1,23 +1,19 @@
 #pragma once
+#include <string>
 #include <sys/mman.h>
-#include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <cstring>
 #include <stdexcept>
-#include <string>
 
 class SharedMemory {
 public:
-    SharedMemory(const std::string& name, size_t size, bool create = false);
+    SharedMemory(const std::string& name, size_t size, bool create);
     ~SharedMemory();
-
-    void* get() const { return mem; }
-    size_t length() const { return size; }
-
+    void* data();
 private:
-    int fd{-1};
-    size_t size{0};
-    void* mem{nullptr};
+    int fd;
+    void* ptr;
+    size_t size;
     std::string name;
 };

@@ -1,72 +1,89 @@
-cmake_minimum_required(VERSION 3.16)
-project(zerorpc LANGUAGES CXX)
+cmake_minimum_required(VERSION 3.10)
+project(ZeroRPC LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_BUILD_TYPE Release)
 
-# Paths
-set(IMGUI_DIR ${CMAKE_SOURCE_DIR}/third_party/imgui)
-
-# Includes
-include_directories(
-    ${CMAKE_SOURCE_DIR}/include
-    ${IMGUI_DIR}
-    ${IMGUI_DIR}/backends
-)
-
-# Find SDL2
+# ImGui + SDL2 dependencies
 find_package(SDL2 REQUIRED)
-message(STATUS "Found SDL2: ${SDL2_LIBRARIES}")
+include_directories(${SDL2_INCLUDE_DIRS})
 
-# ImGui sources (core + SDL2 + SDL2Renderer backends)
-set(IMGUI_SOURCES
-    ${IMGUI_DIR}/imgui.cpp
-    ${IMGUI_DIR}/imgui_draw.cpp
-    ${IMGUI_DIR}/imgui_tables.cpp
-    ${IMGUI_DIR}/imgui_widgets.cpp
-    ${IMGUI_DIR}/backends/imgui_impl_sdl2.cpp
-    ${IMGUI_DIR}/backends/imgui_impl_sdlrenderer2.cpp
+# Include paths
+include_directories(
+    include
+    third_party/imgui
+    third_party/imgui/backends
 )
 
-# Common sources
-set(ZERORPC_COMMON
-    src/SharedMemory.cpp
+# Source files shared across components
+set(SHARED_SOURCES
     src/Futex.cpp
+    src/SharedMemory.cpp
+    src/Benchmark.cpp
+    src/RDTSCTimer.cpp
 )
 
-# Server
+# ========== ZeroRPC Server ==========
 add_executable(zerorpc_server
     src/main_server.cpp
     src/Server.cpp
-    ${ZERORPC_COMMON}
+    ${SHARED_SOURCES}
 )
 
-# CLI Client
+target_link_libraries(zerorpc_server pthread)
+
+# ========== ZeroRPC Client ==========
 add_executable(zerorpc_client
     src/main_client.cpp
     src/Client.cpp
-    ${ZERORPC_COMMON}
+    src/SocketClient.cpp
+    src/PipeClient.cpp
+    ${SHARED_SOURCES}
 )
 
-# GUI Client
+target_link_libraries(zerorpc_client pthread)
+
+# ========== Unix Domain Socket Server ==========
+add_executable(zerorpc_unix_socket_server
+    src/SocketServer.cpp
+)
+target_link_libraries(zerorpc_unix_socket_server pthread)
+
+# ========== TCP Server ==========
+add_executable(zerorpc_tcp_server
+    src/TcpServer.cpp
+)
+target_link_libraries(zerorpc_tcp_server pthread)
+
+# ========== Pipe Server ==========
+add_executable(zerorpc_pipe_server
+    src/PipeServer.cpp
+)
+target_link_libraries(zerorpc_pipe_server pthread)
+
+# ========== GUI Benchmark ==========
 add_executable(zerorpc_gui
-    src/main_gui.cpp
-    src/BenchmarkGUI.cpp
+    src/BenchmarkGUI.cpp   # has main()
     src/Client.cpp
-    ${ZERORPC_COMMON}
-    ${IMGUI_SOURCES}
+    src/Futex.cpp
+    src/SharedMemory.cpp
+    src/Benchmark.cpp
+    src/RDTSCTimer.cpp
+    src/SocketClient.cpp
+    src/PipeClient.cpp
+    third_party/imgui/imgui.cpp
+    third_party/imgui/imgui_draw.cpp
+    third_party/imgui/imgui_tables.cpp
+    third_party/imgui/imgui_widgets.cpp
+    third_party/imgui/imgui_demo.cpp
+    third_party/imgui/backends/imgui_impl_sdl2.cpp
+    third_party/imgui/backends/imgui_impl_sdlrenderer2.cpp
 )
 
-# Link SDL2
-if (TARGET SDL2::SDL2)
-    target_link_libraries(zerorpc_server PRIVATE SDL2::SDL2)
-    target_link_libraries(zerorpc_client PRIVATE SDL2::SDL2)
-    target_link_libraries(zerorpc_gui PRIVATE SDL2::SDL2)
-else()
-    target_include_directories(zerorpc_server PRIVATE ${SDL2_INCLUDE_DIRS})
-    target_include_directories(zerorpc_client PRIVATE ${SDL2_INCLUDE_DIRS})
-    target_include_directories(zerorpc_gui PRIVATE ${SDL2_INCLUDE_DIRS})
-    target_link_libraries(zerorpc_server PRIVATE ${SDL2_LIBRARIES})
-    target_link_libraries(zerorpc_client PRIVATE ${SDL2_LIBRARIES})
-    target_link_libraries(zerorpc_gui PRIVATE ${SDL2_LIBRARIES})
-endif()
+target_link_libraries(zerorpc_gui
+    ${SDL2_LIBRARIES}
+    SDL2::SDL2
+    SDL2::SDL2main
+    pthread
+)
